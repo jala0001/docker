@@ -20,7 +20,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keygen -lf ~/.ssh/id_rsa
+        ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
 
     # 3. Test SSH-forbindelsen
     - name: Test SSH Connection
@@ -28,7 +28,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
+        ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
 
     # 4. Deploy med appleboy SSH-action
     - name: SSH into VM and deploy
