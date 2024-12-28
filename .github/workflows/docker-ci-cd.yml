@@ -18,7 +18,14 @@ jobs:
     - name: Debug SSH Key
       run: echo "${{ secrets.VM_PRIVATE_KEY }}" | ssh-keygen -lf -
 
-    # 3. Log ind på din virtuelle maskine
+    # 3. Manuel SSH-tilslutning for at teste forbindelsen
+    - name: Connect via SSH
+      run: |
+        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo SSH Connection Successful"
+
+    # 4. SSH via appleboy-action som alternativ (kan kommenteres ud, hvis det fejler)
     - name: SSH into VM
       uses: appleboy/ssh-action@v0.1.3
       with:
