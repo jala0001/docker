@@ -18,6 +18,7 @@ jobs:
     - name: Debug SSH Key
       run: |
         echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/debug_key
+        chmod 600 /tmp/debug_key
         ssh-keygen -lf /tmp/debug_key
 
     # 3. Manuel SSH-tilslutning for at teste forbindelsen
