@@ -1,0 +1,34 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Tjek repoet ud
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Log ind på din virtuelle maskine
+    - name: SSH into VM
+      uses: appleboy/ssh-action@v0.1.3
+      with:
+        host: 52.169.156.62
+        username: azureuser
+        key: ${{ secrets.VM_PRIVATE_KEY }}
+        script: |
+          cd ~/dockerPractise
+          git pull
+          sudo docker stop spring-boot-container || true
+          sudo docker rm spring-boot-container || true
+          sudo docker build -t spring-boot-app .
+          sudo docker run -d \
+            --name spring-boot-container \
+            -p 8080:8080 \
+            --link mysql-container:mysql \
+            spring-boot-app
