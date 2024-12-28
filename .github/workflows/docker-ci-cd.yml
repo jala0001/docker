@@ -14,12 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Debug SSH Key for at sikre korrekt format
+    # 2. Debug SSH Key
     - name: Debug SSH Key
       run: |
-        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/debug_key
-        chmod 600 ~/.ssh/debug_key
-        ssh-keygen -lf ~/.ssh/debug_key
+        echo "${{ secrets.VM_PRIVATE_KEY }}" > /tmp/debug_key
+        ssh-keygen -lf /tmp/debug_key
 
     # 3. Manuel SSH-tilslutning for at teste forbindelsen
     - name: Connect via SSH
@@ -28,7 +27,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo SSH Connection Successful"
 
-    # 4. SSH via appleboy-action som alternativ metode
+    # 4. SSH via appleboy-action som alternativ (kan kommenteres ud, hvis det fejler)
     - name: SSH into VM and deploy
       uses: appleboy/ssh-action@v0.1.3
       with:
