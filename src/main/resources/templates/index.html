@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+<h1>Welcome to docker practise</h1>
+
+<form action="/createPerson" method="post">
+  <td>Person name: </td><td><input type="text" name="name"></td>
+  <td>Person age: </td><td><input type="number" name="age"></td>
+    <button type="submit">Submit!</button>
+</form>
+
+<table>
+  <thead><td>Person ID</td><td>Person name</td><td>Person age</td></thead>
+  <tr th:each="person : ${persons}">
+    <td th:text="${person.personId}"></td>
+    <td th:text="${person.name}"></td>
+    <td th:text="${person.age}"></td>
+  </tr>
+</table>
+</body>
+</html>
