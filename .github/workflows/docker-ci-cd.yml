@@ -22,7 +22,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
 
-    # 3. Test SSH-forbindelsen
+    # 3. Test direkte SSH-forbindelse
     - name: Test SSH Connection
       run: |
         mkdir -p ~/.ssh
@@ -30,8 +30,8 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
 
-    # 4. Deploy med appleboy SSH-action
-    - name: SSH into VM and deploy
+    # 4. Test Appleboy SSH-Action
+    - name: SSH into VM using Appleboy
       uses: appleboy/ssh-action@v0.1.3
       with:
         host: 52.169.156.62
@@ -39,6 +39,14 @@ jobs:
         key: ${{ secrets.VM_PRIVATE_KEY }}
         debug: true
         script: |
+          echo "Testing connection within action"
+          whoami
+
+    # 5. Deploy Script
+    - name: Deploy Application
+      if: success() # Kun hvis SSH virker
+      run: |
+        ssh -i ~/.ssh/id_rsa azureuser@52.169.156.62 << 'EOF'
           cd ~/dockerPractise
           git pull
           sudo docker stop spring-boot-container || true
@@ -49,3 +57,4 @@ jobs:
             -p 8080:8080 \
             --link mysql-container:mysql \
             spring-boot-app
+        EOF
