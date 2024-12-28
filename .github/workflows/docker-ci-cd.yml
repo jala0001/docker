@@ -21,6 +21,7 @@ jobs:
         host: 52.169.156.62
         username: azureuser
         key: ${{ secrets.VM_PRIVATE_KEY }}
+        debug: true
         script: |
           cd ~/dockerPractise
           git pull
