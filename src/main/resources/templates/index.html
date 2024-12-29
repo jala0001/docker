@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index</title>
 </head>
 <body>
-<h1>Welcome to docker practise</h1>
+<h1>Welcome to Docker Practice</h1>
 
 <form action="/createPerson" method="post">
   <td>Person name: </td><td><input type="text" name="name"></td>
@@ -21,7 +22,14 @@
     <td th:text="${person.age}"></td>
   </tr>
 </table>
+
 <button id="color">Klik på mig!</button>
-<script src="script.js"></script>
+
+<!-- Indlejret JavaScript -->
+<script>
+  document.getElementById("color").addEventListener("click", function() {
+    document.body.style.backgroundColor = "red";
+  });
+</script>
 </body>
 </html>
