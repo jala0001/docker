@@ -17,7 +17,6 @@ public class PersonService {
     }
 
     public void createPerson(String name, int age) {
-        int newAge = age + 1;
-        personRepository.createPerson(name, newAge);
+        personRepository.createPerson(name, age);
     }
 }
