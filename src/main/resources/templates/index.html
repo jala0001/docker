@@ -1,60 +1,26 @@
-name: CI/CD Pipeline
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+</head>
+<body>
+<h1>Welcome to docker practise</h1>
 
-on:
-  push:
-    branches:
-      - main
+<form action="/createPerson" method="post">
+  <td>Person name: </td><td><input type="text" name="name"></td>
+  <td>Person age: </td><td><input type="number" name="age"></td>
+  <button type="submit">Submit!</button>
+</form>
 
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    # 1. Tjek repoet ud
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    # 2. Installer Java og Maven
-    - name: Set up JDK 23 and Maven
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '23'
-
-    # 3. Byg projektet med Maven
-    - name: Build with Maven
-      run: mvn clean package
-
-    # 4. Debug SSH Key
-    - name: Debug SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
-
-    # 5. Upload ny JAR-fil til serveren
-    - name: Upload new JAR to server
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa target/DockerPractise-0.0.1-SNAPSHOT.jar azureuser@52.169.156.62:/home/azureuser/dockerPractise/target/DockerPractise-0.0.1-SNAPSHOT.jar
-
-    # 6. Deploy applikationen
-    - name: Deploy Application
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 << 'EOF'
-          cd ~/dockerPractise
-          sudo docker stop spring-boot-container || true
-          sudo docker rm spring-boot-container || true
-          sudo docker build -t spring-boot-app .
-          sudo docker run -d \
-            --name spring-boot-container \
-            -p 8080:8080 \
-            --link mysql-container:mysql \
-            spring-boot-app
-        EOF
+<table>
+  <thead><td>Person ID</td><td>Person name</td><td>Person age</td></thead>
+  <tr th:each="person : ${persons}">
+    <td th:text="${person.personId}"></td>
+    <td th:text="${person.name}"></td>
+    <td th:text="${person.age}"></td>
+  </tr>
+</table>
+<h2>Mit navn er Jamie :D</h2>
+</body>
+</html>
