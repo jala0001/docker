@@ -14,7 +14,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Debug SSH Key
+    # 2. Installer Java og Maven
+    - name: Set up JDK 23 and Maven
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '23'
+
+    # 3. Build og test projektet med Maven
+    - name: Build and Test with Maven
+      run: mvn clean package
+
+    # 4. Debug SSH Key
     - name: Debug SSH Key
       run: |
         mkdir -p ~/.ssh
@@ -22,7 +33,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
 
-    # 3. Test SSH-forbindelsen manuelt
+    # 5. Test SSH-forbindelsen manuelt
     - name: Test SSH Connection
       run: |
         mkdir -p ~/.ssh
@@ -30,7 +41,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
 
-    # 4. Deploy manuelt
+    # 6. Deploy applikationen
     - name: Deploy Application
       run: |
         mkdir -p ~/.ssh
