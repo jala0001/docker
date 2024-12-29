@@ -45,7 +45,7 @@ class PersonServiceTest {
     }
 
     @Test
-    void testCreatePerson() {
+    void testCreatePersonWithoutAgeIncrement() {
         // Arrange
         PersonRepository personRepository = mock(PersonRepository.class);
         PersonService personService = new PersonService();
@@ -55,6 +55,7 @@ class PersonServiceTest {
         personService.createPerson("Jamie", 23);
 
         // Assert
-        verify(personRepository, times(1)).createPerson("Jamie", 24); // Age incremented by 1
+        verify(personRepository, times(1)).createPerson("Jamie", 23); // Expect no age increment
     }
+
 }
