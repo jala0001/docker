@@ -21,7 +21,7 @@ jobs:
         distribution: 'temurin'
         java-version: '23'
 
-    # 3. Build projektet med Maven
+    # 3. Byg projektet med Maven
     - name: Build with Maven
       run: mvn clean package
 
@@ -31,9 +31,9 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keygen -lf ~/.ssh/id_rsa
+        ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
 
-    # 5. Test SSH-forbindelsen
+    # 5. Test SSH-forbindelsen manuelt
     - name: Test SSH Connection
       run: |
         mkdir -p ~/.ssh
@@ -41,15 +41,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
 
-    # 6. Deploy applikationen
+    # 6. Deploy manuelt
     - name: Deploy Application
-      uses: appleboy/ssh-action@v0.1.3
-      with:
-        host: 52.169.156.62
-        username: azureuser
-        key: ${{ secrets.VM_PRIVATE_KEY }}
-        debug: true
-        script: |
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 << 'EOF'
           cd ~/dockerPractise
           git pull
           sudo docker stop spring-boot-container || true
@@ -60,3 +58,4 @@ jobs:
             -p 8080:8080 \
             --link mysql-container:mysql \
             spring-boot-app
+        EOF
