@@ -21,8 +21,8 @@ jobs:
         distribution: 'temurin'
         java-version: '23'
 
-    # 3. Byg og test projektet med Maven
-    - name: Build and Test with Maven
+    # 3. Byg projektet med Maven
+    - name: Build with Maven
       run: mvn clean package
 
     # 4. Debug SSH Key
