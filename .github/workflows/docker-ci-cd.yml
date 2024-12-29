@@ -21,8 +21,8 @@ jobs:
         distribution: 'temurin'
         java-version: '23'
 
-    # 3. Build og test projektet med Maven
-    - name: Build and Test with Maven
+    # 3. Byg projektet med Maven
+    - name: Build with Maven
       run: mvn clean package
 
     # 4. Debug SSH Key
@@ -33,13 +33,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keygen -lf ~/.ssh/id_rsa || echo "Key is invalid or unreadable"
 
-    # 5. Test SSH-forbindelsen manuelt
-    - name: Test SSH Connection
+    # 5. Upload ny JAR-fil til serveren
+    - name: Upload new JAR to server
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 "echo 'SSH Connection Successful'"
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa target/DockerPractise-0.0.1-SNAPSHOT.jar azureuser@52.169.156.62:/home/azureuser/dockerPractise/target/DockerPractise-0.0.1-SNAPSHOT.jar
 
     # 6. Deploy applikationen
     - name: Deploy Application
@@ -49,7 +49,6 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa azureuser@52.169.156.62 << 'EOF'
           cd ~/dockerPractise
-          git pull
           sudo docker stop spring-boot-container || true
           sudo docker rm spring-boot-container || true
           sudo docker build -t spring-boot-app .
